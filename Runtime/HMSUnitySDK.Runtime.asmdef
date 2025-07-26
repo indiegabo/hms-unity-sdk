@@ -1,0 +1,18 @@
+{
+    "name": "HMSUnitySDK.Runtime",
+    "rootNamespace": "",
+    "references": [
+        "SocketIOUnityAssembly",
+        "ObjectNet.Framework",
+        "System.Text.Json"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

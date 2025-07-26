@@ -1,0 +1,77 @@
+.container {
+    padding-top: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-left: 5px;
+    flex-shrink: 0;
+}
+
+.label-header {
+    -unity-font-style: bold;
+    border-bottom-color: rgba(113, 113, 113, 0.66);
+    border-bottom-width: 1px;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+}
+
+.label-subheader {
+    -unity-font-style: bold;
+    border-bottom-color: rgba(113, 113, 113, 0.66);
+    border-bottom-width: 0;
+    padding-bottom: 0;
+    margin-bottom: 10px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-left-width: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-left: 0;
+}
+
+.bordered-box {
+    border-left-color: rgba(137, 137, 137, 0.58);
+    border-right-color: rgba(137, 137, 137, 0.58);
+    border-top-color: rgba(137, 137, 137, 0.58);
+    border-bottom-color: rgba(137, 137, 137, 0.58);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.horizontal-field > Label {
+    flex-grow: 0;
+    min-width: 80px;
+}
+
+.runtime-mode-label {
+}
+
+.text-area #unity-text-input {
+    min-height: 40px;
+    white-space: normal;
+}
+
+#tab-view-content {
+    height: 100% !important;
+    flex-grow: 1 !important;
+}
+
+#tab-runtime {
+    height: 100% !important;
+    flex-grow: 1 !important;
+}
+
+#tab-runtime #unity-tab__content-container{
+    height: 100% !important;
+    flex-grow: 1 !important;
+}
+
+#tab-view-content #unity-tab-view__content-container {
+    height: 100% !important;
+    flex-grow: 1 !important;
+}

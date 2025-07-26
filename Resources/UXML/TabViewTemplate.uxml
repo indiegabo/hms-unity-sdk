@@ -1,0 +1,5 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/HMSUnitySDK/Resources/Styles/TabView_style.uss?fileID=7433441132597879392&amp;guid=527248bc783cba54b91ee2262c4e9fbe&amp;type=3#TabView_style" />
+    <ui:VisualElement name="container-tab-buttons" style="flex-grow: 1; flex-direction: row; background-color: rgb(34, 34, 34); height: 25px; max-height: 25px; width: 100%;" />
+    <ui:VisualElement name="container-views" style="flex-grow: 1;" />
+</ui:UXML>

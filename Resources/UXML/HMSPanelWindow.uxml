@@ -1,0 +1,39 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/HMSUnitySDK/Resources/Styles/Common_style.uss?fileID=7433441132597879392&amp;guid=f5757089a52a70b4996854adf47cec4b&amp;type=3#Common_style" />
+    <HMSUnitySDK.Editor.SliptView fixed-pane-initial-dimension="300" name="container-main-view">
+        <ui:VisualElement name="container-runtime-setup" style="width: auto; min-width: 300px; overflow: hidden;">
+            <ui:VisualElement name="container-runtime-setup-header" class="container" style="flex-grow: 0; background-color: rgb(29, 29, 29);">
+                <ui:Label text="HMS Runtime Setup" style="font-size: 14px; -unity-font-style: bold; -unity-text-align: middle-left; border-bottom-width: 0; border-left-color: rgb(192, 192, 192); border-right-color: rgb(192, 192, 192); border-top-color: rgb(192, 192, 192); border-bottom-color: rgba(113, 113, 113, 0.67); margin-top: 0; padding-bottom: 0; margin-bottom: 0;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="container-runtime-role" data-source="project://database/Assets/HMSUnitySDK/Resources/HMSResources/HMSRuntimeInfo.asset?fileID=11400000&amp;guid=dceb00b09ddc2204381098bb80f47ba8&amp;type=2#HMSRuntimeInfo" data-source-path="_role" class="container" style="flex-grow: 0; border-bottom-width: 0;">
+                <ui:Label text="Role" class="label-header" />
+                <ui:EnumField value="Client" type="HMSUnitySDK.HMSRuntimeRole, HMSUnitySDK.Runtime" name="field-runtime-role" data-source="project://database/Assets/HMSUnitySDK/Resources/HMSResources/HMSRuntimeInfo.asset?fileID=11400000&amp;guid=dceb00b09ddc2204381098bb80f47ba8&amp;type=2#HMSRuntimeInfo" data-source-path="_role" class="horizontal-field" />
+                <HMSUnitySDK.Editor.HMSBuildProfileElement name="role-build-profile" />
+            </ui:VisualElement>
+            <ui:VisualElement name="container-profile" class="container" style="flex-grow: 0;">
+                <ui:Label text="Runtime Profile" tooltip="The profile applied to the build" class="label-header" />
+                <uie:ObjectField enabled="true" name="field-runtime-profile-so" type="HMSUnitySDK.HMSRuntimeProfile, HMSUnitySDK.Runtime" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:TabView name="tab-view-content" style="flex-shrink: 0; flex-grow: 1;">
+            <ui:Tab label="Runtime" name="tab-runtime" style="width: auto; flex-shrink: 0; flex-grow: 1; height: 100%;">
+                <ui:VisualElement name="container-runtime-manager" style="flex-grow: 1; min-width: 300px;">
+                    <ui:VisualElement name="container-runtime-manager-header" class="container" style="flex-grow: 0; background-color: rgb(29, 29, 29); flex-direction: row; align-items: center; justify-content: space-between;">
+                        <ui:Label text="HMS Runtime Manager" style="font-size: 14px; -unity-font-style: bold; -unity-text-align: middle-left; border-bottom-width: 0; border-left-color: rgb(192, 192, 192); border-right-color: rgb(192, 192, 192); border-top-color: rgb(192, 192, 192); border-bottom-color: rgba(113, 113, 113, 0.67); margin-top: 0; padding-bottom: 0; margin-bottom: 0;" />
+                        <ui:VisualElement name="container-running-mode" style="flex-grow: 0; margin-bottom: 0; flex-direction: row; align-items: center; justify-content: space-between; display: flex;">
+                            <ui:Label text="Editor" name="label-runtime-mode" style="-unity-font-style: normal; font-size: 10px; background-color: rgb(64, 2, 57); color: rgb(255, 255, 255); border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; padding-top: 2px; padding-right: 5px; padding-bottom: 2px; padding-left: 5px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); border-top-width: 0; border-right-width: 0; border-bottom-width: 0; border-left-width: 0; display: flex;" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="container-runtime-manager-body" style="flex-grow: 1; flex-shrink: 0;">
+                        <HMSUnitySDK.Editor.HMSRuntimeManagerPlaceholderElement name="runtime-manager-placeholder" style="flex-grow: 1; display: flex;" />
+                        <HMSUnitySDK.Editor.HMSRuntimeManagerClientElement name="runtime-manager-client" style="display: flex; flex-grow: 1;" />
+                        <HMSUnitySDK.Editor.HMSRuntimeManagerServerElement name="runtime-manager-server" style="display: none; flex-grow: 1;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:Tab>
+            <ui:Tab label="Builder" name="tab-builder" style="flex-shrink: 0; flex-grow: 1; height: 100%;">
+                <HMSUnitySDK.Editor.HMSBuilderElement name="builder" />
+            </ui:Tab>
+        </ui:TabView>
+    </HMSUnitySDK.Editor.SliptView>
+</ui:UXML>

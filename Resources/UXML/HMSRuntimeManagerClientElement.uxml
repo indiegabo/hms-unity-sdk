@@ -1,0 +1,38 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/HMSUnitySDK/Resources/Styles/Common_style.uss?fileID=7433441132597879392&amp;guid=f5757089a52a70b4996854adf47cec4b&amp;type=3#Common_style" />
+    <Style src="project://database/Assets/HMSUnitySDK/Resources/Styles/RuntimeManagerClient_style.uss?fileID=7433441132597879392&amp;guid=0102c422acac5994cbebb39d165596a0&amp;type=3#RuntimeManagerClient_style" />
+    <ui:VisualElement name="container" class="container" style="flex-grow: 1; flex-shrink: 1;">
+        <ui:VisualElement name="container-client-content" style="flex-grow: 1; background-color: rgb(29, 29, 29); border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; align-items: stretch; justify-content: flex-start; padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px;">
+            <ui:VisualElement name="container-auth-form" style="flex-grow: 0; margin-bottom: 5px;">
+                <ui:Label text="HMS Authentication" class="label-header" />
+                <ui:TextField label="Username / Email" placeholder-text="The username or e-mail" name="field-username-or-email" />
+                <ui:TextField label="Password" placeholder-text="The password" name="field-password" />
+                <ui:Button text="Login" name="button-login" style="margin-top: 5px;" />
+                <ui:VisualElement name="container-auth-info" class="bordered-box" style="flex-grow: 0; padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; margin-bottom: 5px; margin-top: 5px;">
+                    <ui:VisualElement name="container-logged-user" style="flex-grow: 1; flex-direction: row; align-items: center; -unity-text-align: middle-left;">
+                        <ui:Label text="Logged as:" name="label-identifier-label" style="-unity-font-style: bold;" />
+                        <ui:Label name="label-identifier" enabled="false" parse-escape-sequences="true" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="container-token" style="flex-grow: 1; flex-direction: column; -unity-text-align: middle-left;">
+                        <ui:Label text="Access Token" name="label-token-label" style="-unity-font-style: bold;" />
+                        <ui:TextField name="field-access-token" multiline="true" vertical-scroller-visibility="Auto" enabled="false" placeholder-text="Displayed after login" class="text-area" style="flex-grow: 1;" />
+                    </ui:VisualElement>
+                    <ui:VisualElement name="container-refresh-token" style="flex-grow: 1; flex-direction: column; -unity-text-align: middle-left;">
+                        <ui:Label text="Refresh Token" name="label-refresh-token-label" style="-unity-font-style: bold;" />
+                        <ui:TextField name="field-refresh-token" enabled="false" readonly="false" placeholder-text="Displayed after login" style="flex-grow: 1;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="container-object-net" style="flex-grow: 0; margin-bottom: 12px;">
+                <ui:Label text="Server Instance" class="label-header" />
+                <ui:TextField label="Instance ID" placeholder-text="The instance ID" name="field-instance-id" enabled="true" readonly="false" />
+                <ui:Button text="Create Instance" name="button-create-instance" />
+                <ui:Button text="Destroy Instance" name="button-destroy-instance" style="background-color: rgb(82, 2, 2);" />
+            </ui:VisualElement>
+            <ui:VisualElement name="container-object-net" style="flex-grow: 0; margin-bottom: 12px;">
+                <ui:Label text="ObjectNet" class="label-header" />
+                <ui:Button text="Connect" name="button-connect" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

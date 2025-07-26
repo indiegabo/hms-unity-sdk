@@ -1,1 +1,1 @@
-# hms-unity-sdk
+# HMS Unity SDK

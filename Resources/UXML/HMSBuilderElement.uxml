@@ -1,0 +1,12 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/HMSUnitySDK/Resources/Styles/Common_style.uss?fileID=7433441132597879392&amp;guid=f5757089a52a70b4996854adf47cec4b&amp;type=3#Common_style" />
+    <Style src="project://database/Assets/HMSUnitySDK/Resources/Styles/RuntimeManagerClient_style.uss?fileID=7433441132597879392&amp;guid=0102c422acac5994cbebb39d165596a0&amp;type=3#RuntimeManagerClient_style" />
+    <ui:VisualElement name="container" class="container" style="flex-grow: 1; flex-shrink: 1;">
+        <uie:Toolbar>
+            <uie:ToolbarSpacer style="flex-grow: 1;" />
+            <uie:ToolbarButton text="Build" name="button-build" />
+            <uie:ToolbarButton text="Clean build" name="button-build-clean" />
+        </uie:Toolbar>
+        <ui:VisualElement name="container-client-content" style="flex-grow: 1; background-color: rgb(29, 29, 29); border-top-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; border-bottom-left-radius: 5px; align-items: stretch; justify-content: flex-start; padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px;" />
+    </ui:VisualElement>
+</ui:UXML>
