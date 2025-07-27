@@ -1,6 +1,6 @@
 {
   "name": "com.indiegabo.hms-unity-sdk",
-  "version": "1.0.52",
+  "version": "1.0.53",
   "displayName": "HMS Unity SDK",
   "description": "A Unity package for the HMS Unity SDK.",
   "unity": "6000.1",
