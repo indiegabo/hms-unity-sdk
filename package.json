@@ -1,6 +1,6 @@
 {
   "name": "com.indiegabo.hms-unity-sdk",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "displayName": "HMS Unity SDK",
   "description": "A Unity package for the HMS Unity SDK.",
   "unity": "6000.1",
@@ -8,6 +8,10 @@
   "documentationUrl": "https://indiegabo.github.io/hms-unity-sdk",
   "changelogUrl": "https://indiegabo.github.io/hms-unity-sdk/documentation/CHANGELOG.html",
   "licensesUrl": "https://github.com/indiegabo/hms-unity-sdk/blob/main/LICENSE.md",
+  "dependencies": {
+    "com.itisnajim.socketiounity": "^1.1.5",
+    "com.veriorpies.parrelsync": "^1.5.2"
+  },
   "author": {
     "name": "Indiegabo",
     "email": "indiegabo@gmail.com",
