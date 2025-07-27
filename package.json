@@ -1,6 +1,6 @@
 {
   "name": "com.indiegabo.hms-unity-sdk",
-  "version": "1.0.51",
+  "version": "1.0.52",
   "displayName": "HMS Unity SDK",
   "description": "A Unity package for the HMS Unity SDK.",
   "unity": "6000.1",
@@ -18,50 +18,5 @@
     "multiplayer",
     "editor",
     "indiegabo"
-  ],
-  "scripts": {
-    "release": "npm run release-it",
-    "pre-release": "npx auto-changelog -p && mv -f CHANGELOG.md ../../docfx_project/documentation/CHANGELOG.md && docfx ../../docfx_project/docfx.json && echo Go create Unity .meta and the .unitypackage before releasing",
-    "serve-docs": "docfx ../../docfx_project/docfx.json --serve",
-    "build-docs": "docfx ../../docfx_project/docfx.json",
-    "prepare": "node ./Scripts/sync-versions.js"
-  },
-  "devDependencies": {
-    "@semantic-release/changelog": "^6.0.2",
-    "@semantic-release/git": "^10.0.1",
-    "semantic-release": "^21.0.7",
-    "jq": "^1.7.2"
-  },
-  "release": {
-    "branches": [
-      "main",
-      {
-        "name": "develop",
-        "prerelease": "beta"
-      }
-    ],
-    "plugins": [
-      "@semantic-release/commit-analyzer",
-      "@semantic-release/release-notes-generator",
-      "@semantic-release/changelog",
-      [
-        "@semantic-release/exec",
-        {
-          "prepareCmd": "npm run prepare -- --version ${nextRelease.version}"
-        }
-      ],
-      [
-        "@semantic-release/git",
-        {
-          "assets": [
-            "CHANGELOG.md",
-            "package.json",
-            "Assets/HMSUnitySDK/package.json"
-          ],
-          "message": "chore(release): v${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
-        }
-      ],
-      "@semantic-release/github"
-    ]
-  }
+  ]
 }
