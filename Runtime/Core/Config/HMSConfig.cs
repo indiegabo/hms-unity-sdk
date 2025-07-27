@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using HMSUnitySDK.Utils;
 using System.Reflection;
+using System.Linq;
 
 namespace HMSUnitySDK
 {
@@ -13,7 +14,6 @@ namespace HMSUnitySDK
         private static readonly string SOName = "HMSConfig";
         private static HMSConfig _hmsConfig;
         private static List<Assembly> _cachedAssemblies;
-
 
         public static HMSConfig Get()
         {
@@ -35,42 +35,35 @@ namespace HMSUnitySDK
         }
 #endif
 
-        private static HashSet<string> _defaultAssembliesNames = new()
-        {
-            "Assembly-CSharp",
-            "Assembly-CSharp-firstpass",
-            "HMSUnitySDK.Runtime",
-            "SGUnitySDK.Runtime", // TODO: Remove this assembly as it is not HMS
-        };
-
         #endregion
 
-        [SerializeField] private List<string> _projectSpecificAssemblies = new();
-
-        public List<Assembly> GetTargetAssemblies()
+        public List<Assembly> GetAssemblies()
         {
             if (_cachedAssemblies != null)
             {
                 return _cachedAssemblies;
             }
 
-            List<string> allAssemblyNames = new(_defaultAssembliesNames);
-            allAssemblyNames.AddRange(_projectSpecificAssemblies);
+            // Get all assemblies in the current domain (Unity-compatible way)
+            _cachedAssemblies = new List<Assembly>();
 
-            var assemblies = new List<Assembly>();
-            foreach (string assemblyName in allAssemblyNames)
+            // Get the entry assembly (usually Assembly-CSharp)
+            var entryAssembly = Assembly.GetExecutingAssembly();
+            _cachedAssemblies.Add(entryAssembly);
+
+            // Get all other loaded assemblies
+            foreach (var assembly in Assembly.Load("Assembly-CSharp").GetReferencedAssemblies())
             {
                 try
                 {
-                    assemblies.Add(Assembly.Load(assemblyName));
+                    _cachedAssemblies.Add(Assembly.Load(assembly));
                 }
                 catch (System.Exception e)
                 {
-                    Debug.LogError($"Failed to load assembly {assemblyName}. Skipping. Error: {e.Message}");
+                    Debug.LogError($"Failed to load assembly {assembly.Name}. Skipping. Error: {e.Message}");
                 }
             }
 
-            _cachedAssemblies = assemblies;
             return _cachedAssemblies;
         }
     }

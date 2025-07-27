@@ -21,7 +21,7 @@ namespace HMSUnitySDK
             hmsRuntimeInfo.Profile.ClearCache();
 
             HMSConfig.ClearCache();
-            Debug.Log($"-HMSUnitySDK | {nameof(HMSBootstrapper)} | HMSRuntimeInfo: {hmsRuntimeInfo.Role}");
+            HMSLogger.Log($"{nameof(HMSBootstrapper)} | HMSRuntimeInfo: {hmsRuntimeInfo.Role}");
 
             GameObject sdkObject = new("HMSUnitySDK");
             Object.DontDestroyOnLoad(sdkObject);
@@ -50,7 +50,7 @@ namespace HMSUnitySDK
 
             var handlerBaseType = typeof(HMSLauncherInteropsHandler);
 
-            var childrenTypes = hmsConfig.GetTargetAssemblies()
+            var childrenTypes = hmsConfig.GetAssemblies()
                 .SelectMany(assembly =>
                 {
                     try
