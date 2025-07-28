@@ -107,7 +107,8 @@ namespace HMSUnitySDK
                 .Where(t => t.IsClass
                     && !t.IsAbstract
                     && typeof(IHMSService).IsAssignableFrom(t)
-                );
+                )
+                .Distinct();
 
             // Iterate over the types and create a game object for each one
             // that is a valid service for the current runtime role
