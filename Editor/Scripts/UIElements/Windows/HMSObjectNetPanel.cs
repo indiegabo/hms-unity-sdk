@@ -14,7 +14,7 @@ namespace HMSUnitySDK.Editor
         private static readonly string TemplatePath = "ObjectNet/HMSObjectNetPanelWindow";
         private static HMSObjectNetPanelWindow _window;
 
-        [MenuItem("HMSUnitySDK/ObjectNet", false, 0)]
+        [MenuItem("Tools/HMSUnitySDK/ObjectNet/Config Panel", false, 1)]
         public static void ShowWindow()
         {
             if (_window == null)

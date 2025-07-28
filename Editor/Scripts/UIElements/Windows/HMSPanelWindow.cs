@@ -21,13 +21,13 @@ namespace HMSUnitySDK.Editor
         private static readonly string RuntimeModeBuildColorHex = "400239";
         private static readonly string RuntimeModeBuildText = "Production";
 
-        [MenuItem("HMSUnitySDK/Panel", false, 0)]
+        [MenuItem("Tools/HMSUnitySDK/Main Panel", false, 0)]
         public static void ShowWindow()
         {
             if (_window == null)
             {
                 _window = GetWindow<HMSPanelWindow>();
-                _window.titleContent = new GUIContent("HMS Panel");
+                _window.titleContent = new GUIContent("Handy Multiplayer Server Panel");
                 _window.minSize = new Vector2(400, 300);
             }
             else
