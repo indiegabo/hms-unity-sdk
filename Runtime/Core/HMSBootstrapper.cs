@@ -65,7 +65,8 @@ namespace HMSUnitySDK
                 .Where(t => t.IsClass
                     && !t.IsAbstract
                     && handlerBaseType.IsAssignableFrom(t)
-                );
+                )
+                .Distinct();
 
             foreach (System.Type childType in childrenTypes)
             {
