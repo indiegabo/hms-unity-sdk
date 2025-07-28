@@ -91,14 +91,23 @@ namespace HMSUnitySDK
             var services = new List<IHMSService>();
             var serviceBaseType = typeof(IHMSService);
 
-            var configAssembly = hmsConfig.GetType().Assembly;
-
-            var childrenTypes = configAssembly.GetTypes()
-                .Where(t => t.IsClass
-                    && !t.IsAbstract
-                    && serviceBaseType.IsAssignableFrom(t)
-                )
-                .Distinct();
+            IEnumerable<Type> childrenTypes = hmsConfig.GetAssemblies()
+                 .SelectMany(assembly =>
+                 {
+                     try
+                     {
+                         return assembly.GetTypes();
+                     }
+                     catch
+                     {
+                         return Array.Empty<Type>();
+                     }
+                 })
+                 .Where(t => t.IsClass
+                     && !t.IsAbstract
+                     && typeof(IHMSService).IsAssignableFrom(t)
+                 )
+                 .Distinct();
 
             // Iterate over the types and create a game object for each one
             // that is a valid service for the current runtime role

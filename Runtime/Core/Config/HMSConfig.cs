@@ -36,5 +36,35 @@ namespace HMSUnitySDK
 #endif
 
         #endregion
+
+        public List<Assembly> GetAssemblies()
+        {
+            if (_cachedAssemblies != null)
+            {
+                return _cachedAssemblies;
+            }
+
+            // Get all assemblies in the current domain (Unity-compatible way)
+            _cachedAssemblies = new List<Assembly>();
+
+            // Get the entry assembly (usually Assembly-CSharp)
+            var entryAssembly = Assembly.GetExecutingAssembly();
+            _cachedAssemblies.Add(entryAssembly);
+
+            // Get all other loaded assemblies
+            foreach (var assembly in Assembly.Load("Assembly-CSharp").GetReferencedAssemblies())
+            {
+                try
+                {
+                    _cachedAssemblies.Add(Assembly.Load(assembly));
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"Failed to load assembly {assembly.Name}. Skipping. Error: {e.Message}");
+                }
+            }
+
+            return _cachedAssemblies;
+        }
     }
 }
