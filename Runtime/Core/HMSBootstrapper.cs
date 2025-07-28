@@ -49,19 +49,9 @@ namespace HMSUnitySDK
             handlersGO.transform.SetParent(parent);
 
             var handlerBaseType = typeof(HMSLauncherInteropsHandler);
+            var configAssembly = hmsConfig.GetType().Assembly;
 
-            var childrenTypes = hmsConfig.GetAssemblies()
-                .SelectMany(assembly =>
-                {
-                    try
-                    {
-                        return assembly.GetTypes();
-                    }
-                    catch
-                    {
-                        return System.Array.Empty<System.Type>();
-                    }
-                })
+            var childrenTypes = configAssembly.GetTypes()
                 .Where(t => t.IsClass
                     && !t.IsAbstract
                     && handlerBaseType.IsAssignableFrom(t)
@@ -75,7 +65,6 @@ namespace HMSUnitySDK
                 var handler = handlerObject.AddComponent(childType) as HMSLauncherInteropsHandler;
                 launcherInteropsService.RegisterHandler(handler);
             }
-
         }
     }
 }

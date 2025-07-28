@@ -91,22 +91,12 @@ namespace HMSUnitySDK
             var services = new List<IHMSService>();
             var serviceBaseType = typeof(IHMSService);
 
-            // Get all types that are a subclass of IHMSService and are not abstract
-            IEnumerable<Type> childrenTypes = hmsConfig.GetAssemblies()
-                .SelectMany(assembly =>
-                {
-                    try
-                    {
-                        return assembly.GetTypes();
-                    }
-                    catch
-                    {
-                        return Array.Empty<Type>();
-                    }
-                })
+            var configAssembly = hmsConfig.GetType().Assembly;
+
+            var childrenTypes = configAssembly.GetTypes()
                 .Where(t => t.IsClass
                     && !t.IsAbstract
-                    && typeof(IHMSService).IsAssignableFrom(t)
+                    && serviceBaseType.IsAssignableFrom(t)
                 )
                 .Distinct();
 
