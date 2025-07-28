@@ -39,13 +39,13 @@ namespace HMSUnitySDK
         {
             _launcherInfo = ResolveLauncherInfo();
 
-            Debug.Log(string.Format(
-                "-HMSLauncherInteropsService | Instance ID: {0}",
+            HMSLogger.Log(string.Format(
+                "Instance ID: {0}",
                 _launcherInfo.ClientID
             ));
 
-            Debug.Log(string.Format(
-                "-HMSLauncherInteropsService | Socket Host: {0} | Socket Port: {1}",
+            HMSLogger.Log(string.Format(
+                "Socket Host: {0} | Socket Port: {1}",
                 _launcherInfo.Host,
                 _launcherInfo.Port
             ));
