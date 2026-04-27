@@ -15,27 +15,32 @@ namespace HMSUnitySDK.ObjectNet
 
         public static HMSObjectNetConfig Get()
         {
-            var config = Resources.Load<HMSObjectNetConfig>("HMSUnitySDK/HMSObjectNetConfig");
+            if (_config != null)
+            {
+                return _config;
+            }
 
-            if (config == null)
+            _config = Resources.Load<HMSObjectNetConfig>("HMSUnitySDK/HMSObjectNetConfig");
+
+            if (_config == null)
             {
 #if UNITY_EDITOR
                 var directory = new System.IO.DirectoryInfo(Application.dataPath + "/Resources/HMSUnitySDK");
                 if (!directory.Exists) directory.Create();
 
-                config = ScriptableObject.CreateInstance<HMSObjectNetConfig>();
+                _config = ScriptableObject.CreateInstance<HMSObjectNetConfig>();
                 AssetDatabase.CreateAsset(
-                    config,
+                    _config,
                     "Assets/Resources/HMSUnitySDK/HMSObjectNetConfig.asset"
                 );
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
 #else
-                config = ScriptableObject.CreateInstance<HMSObjectNetConfig>();
+                _config = ScriptableObject.CreateInstance<HMSObjectNetConfig>();
 #endif
             }
 
-            return config;
+            return _config;
         }
 
         public static void ClearCache()
