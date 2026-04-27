@@ -96,6 +96,18 @@ namespace HMSUnitySDK.Editor
                 return;
             }
 
+            if (!ValidateRuntimeConfigurationForBuild(
+                    out string runtimeValidationError,
+                    enforceRoleModeConsistency: false
+                ))
+            {
+                Debug.LogError(
+                    "Build aborted due to invalid HMS runtime configuration. " +
+                    runtimeValidationError
+                );
+                return;
+            }
+
             if (hmsOptions.shoulUpdateVersion)
             {
                 string newVersion = UpdateVersion(Application.version, hmsOptions.versionUpdateDefinition);
@@ -111,6 +123,18 @@ namespace HMSUnitySDK.Editor
 
             var preBuildOperations = _buildOperations.Select(op => op.Prebuild()).ToArray();
             await Task.WhenAll(preBuildOperations);
+
+            if (!ValidateRuntimeConfigurationForBuild(
+                    out runtimeValidationError,
+                    enforceRoleModeConsistency: true
+                ))
+            {
+                Debug.LogError(
+                    "Build aborted due to invalid HMS runtime configuration " +
+                    "after pre-build operations. " + runtimeValidationError
+                );
+                return;
+            }
 
             string completePath = ResolveBuildPath(basePath, profile);
             var options = new BuildPlayerWithProfileOptions()
@@ -252,6 +276,48 @@ namespace HMSUnitySDK.Editor
             };
 
             return path;
+        }
+
+        private static bool ValidateRuntimeConfigurationForBuild(
+            out string validationError,
+            bool enforceRoleModeConsistency
+        )
+        {
+            HMSRuntimeInfo.ClearCache();
+            var runtimeInfo = HMSRuntimeInfo.GetFromResources();
+
+            if (runtimeInfo == null)
+            {
+                validationError =
+                    "HMSRuntimeInfo asset could not be loaded from " +
+                    "Resources/HMSResources/HMSRuntimeInfo.";
+                return false;
+            }
+
+            if (runtimeInfo.Profile == null)
+            {
+                validationError =
+                    "HMSRuntimeInfo has no runtime profile assigned. " +
+                    "Assign a valid HMSRuntimeProfile before building.";
+                return false;
+            }
+
+            bool requiresBuildMode =
+                runtimeInfo.Role == HMSRuntimeRole.LaunchedClient ||
+                runtimeInfo.Role == HMSRuntimeRole.Server;
+            if (enforceRoleModeConsistency &&
+                requiresBuildMode &&
+                runtimeInfo.Profile.RuntimeMode != HMSRuntimeMode.Build)
+            {
+                validationError =
+                    $"Runtime profile mode {runtimeInfo.Profile.RuntimeMode} is " +
+                    $"invalid for role {runtimeInfo.Role}. " +
+                    "Use HMSRuntimeMode.Build for launched players and servers.";
+                return false;
+            }
+
+            validationError = string.Empty;
+            return true;
         }
 
         private static async Task RunTaskSynchronously(Func<Task> taskFunc, string operationName = "Build Operation")

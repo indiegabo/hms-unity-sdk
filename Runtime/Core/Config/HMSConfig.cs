@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 using HMSUnitySDK.Utils;
 using System.Reflection;
@@ -44,27 +45,82 @@ namespace HMSUnitySDK
                 return _cachedAssemblies;
             }
 
-            // Get all assemblies in the current domain (Unity-compatible way)
-            _cachedAssemblies = new List<Assembly>();
+            var assemblyMap = new Dictionary<string, Assembly>(
+                StringComparer.OrdinalIgnoreCase
+            );
 
-            // Get the entry assembly (usually Assembly-CSharp)
-            var entryAssembly = Assembly.GetExecutingAssembly();
-            _cachedAssemblies.Add(entryAssembly);
+            AddAssembly(assemblyMap, Assembly.GetExecutingAssembly());
 
-            // Get all other loaded assemblies
-            foreach (var assembly in Assembly.Load("Assembly-CSharp").GetReferencedAssemblies())
+            foreach (var loadedAssembly in AppDomain.CurrentDomain.GetAssemblies())
             {
+                AddAssembly(assemblyMap, loadedAssembly);
+            }
+
+            var knownAssemblies = assemblyMap.Values.ToList();
+            foreach (var assembly in knownAssemblies)
+            {
+                AssemblyName[] references;
                 try
                 {
-                    _cachedAssemblies.Add(Assembly.Load(assembly));
+                    references = assembly.GetReferencedAssemblies();
                 }
-                catch (System.Exception e)
+                catch (Exception e)
                 {
-                    Debug.LogError($"Failed to load assembly {assembly.Name}. Skipping. Error: {e.Message}");
+                    Debug.LogWarning(
+                        $"Failed to get references for assembly {assembly.GetName().Name}. " +
+                        $"Skipping references. Error: {e.Message}"
+                    );
+                    continue;
+                }
+
+                foreach (var reference in references)
+                {
+                    AddAssembly(assemblyMap, TryLoadAssembly(reference));
                 }
             }
 
+            // Keep Assembly-CSharp loading as a compatibility fallback for projects
+            // that still use default script compilation assemblies.
+            AddAssembly(assemblyMap, TryLoadAssembly(new AssemblyName("Assembly-CSharp")));
+
+            _cachedAssemblies = assemblyMap.Values.ToList();
+
             return _cachedAssemblies;
+        }
+
+        private static void AddAssembly(
+            IDictionary<string, Assembly> assemblyMap,
+            Assembly assembly
+        )
+        {
+            if (assembly == null || assembly.IsDynamic)
+            {
+                return;
+            }
+
+            var fullName = assembly.FullName;
+            if (string.IsNullOrEmpty(fullName) || assemblyMap.ContainsKey(fullName))
+            {
+                return;
+            }
+
+            assemblyMap.Add(fullName, assembly);
+        }
+
+        private static Assembly TryLoadAssembly(AssemblyName assemblyName)
+        {
+            try
+            {
+                return Assembly.Load(assemblyName);
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning(
+                    $"Failed to load assembly {assemblyName.Name}. " +
+                    $"Skipping. Error: {e.Message}"
+                );
+                return null;
+            }
         }
     }
 }

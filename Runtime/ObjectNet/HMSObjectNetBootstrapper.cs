@@ -5,22 +5,62 @@ namespace HMSUnitySDK.ObjectNet
 {
     public static class HMSObjectNetBootstrapper
     {
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void BeforeSceneLoad()
+        [HMSInit(RuntimeInitializeLoadType.BeforeSceneLoad, order: -100)]
+        private static void ResetConfigCache()
         {
             HMSObjectNetConfig.ClearCache();
         }
 
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-        private static void AfterSceneLoad()
+        [HMSInit(RuntimeInitializeLoadType.AfterSceneLoad)]
+        private static void InitializeObjectNetManager()
         {
             var config = HMSObjectNetConfig.Get();
-            if (!config.ShouldInstantiateManager) return;
+            if (config == null)
+            {
+                HMSLogger.LogWarning(
+                    $"{nameof(HMSObjectNetBootstrapper)} could not load " +
+                    $"{nameof(HMSObjectNetConfig)}."
+                );
+                return;
+            }
+
+            if (!config.ShouldInstantiateManager)
+            {
+                return;
+            }
+
+            if (config.NetworkManagerPrefab == null)
+            {
+                HMSLogger.LogWarning(
+                    $"{nameof(HMSObjectNetBootstrapper)} skipped manager instantiation " +
+                    "because NetworkManagerPrefab is null."
+                );
+                return;
+            }
+
             var networkManager = Object.Instantiate(config.NetworkManagerPrefab);
+            if (networkManager == null)
+            {
+                HMSLogger.LogError(
+                    $"{nameof(HMSObjectNetBootstrapper)} failed to instantiate " +
+                    "NetworkManagerPrefab."
+                );
+                return;
+            }
+
             networkManager.StopNetwork();
             Object.DontDestroyOnLoad(networkManager);
 
-            var hmsNetworkManager = HMSLocator.Get<HMSNetworkManager>();
+            if (!HMSLocator.TryGet(out HMSNetworkManager hmsNetworkManager, out var reason))
+            {
+                HMSLogger.LogError(
+                    $"{nameof(HMSObjectNetBootstrapper)} could not resolve " +
+                    $"{nameof(HMSNetworkManager)}. {reason}"
+                );
+                Object.Destroy(networkManager.gameObject);
+                return;
+            }
+
             hmsNetworkManager.Init(networkManager);
         }
     }

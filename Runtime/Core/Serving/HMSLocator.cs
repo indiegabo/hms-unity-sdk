@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using UnityEngine;
 
@@ -22,12 +21,167 @@ namespace HMSUnitySDK
         private static readonly Dictionary<Type, IHMSService> _services = new();
 
         /// <summary>
-        /// Gets an instance of the service type T. Throws an exception if the service is not registered.
+        /// Indicates whether the locator instance is available for service resolution.
+        /// </summary>
+        public static bool IsInitialized => _instance != null;
+
+        /// <summary>
+        /// Gets an instance of the service type T.
         /// </summary>
         /// <typeparam name="T">The service type to get.</typeparam>
         /// <returns>An instance of the service.</returns>
-        /// <exception cref="ArgumentException">If the service is not registered.</exception>
-        public static T Get<T>() where T : class, IHMSService => _instance.GetService<T>();
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when the locator has not been initialized yet.
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// Thrown when the service was not registered.
+        /// </exception>
+        public static T Get<T>() where T : class, IHMSService
+        {
+            if (_instance == null)
+            {
+                throw new InvalidOperationException(
+                    $"{nameof(HMSLocator)} is not initialized. " +
+                    "Ensure HMSBootstrapper finished successfully before " +
+                    "requesting services."
+                );
+            }
+
+            return _instance.GetService<T>();
+        }
+
+        /// <summary>
+        /// Tries to resolve a registered service without throwing exceptions.
+        /// </summary>
+        /// <typeparam name="T">The service type to get.</typeparam>
+        /// <param name="service">Resolved service instance when available.</param>
+        /// <returns>
+        /// True when the locator is initialized and the service is registered.
+        /// </returns>
+        public static bool TryGet<T>(out T service) where T : class, IHMSService
+        {
+            return TryGet(out service, out _);
+        }
+
+        /// <summary>
+        /// Tries to resolve a registered service without throwing exceptions and
+        /// returns an explicit reason when it cannot be resolved.
+        /// </summary>
+        /// <typeparam name="T">The service type to get.</typeparam>
+        /// <param name="service">Resolved service instance when available.</param>
+        /// <param name="reason">Diagnostic reason when resolution fails.</param>
+        /// <returns>
+        /// True when the locator is initialized and the service is registered.
+        /// </returns>
+        public static bool TryGet<T>(out T service, out string reason)
+            where T : class, IHMSService
+        {
+            service = null;
+
+            if (_instance == null)
+            {
+                reason =
+                    $"{nameof(HMSLocator)} is not initialized. " +
+                    "HMSBootstrapper may have aborted before service " +
+                    "registration.";
+                return false;
+            }
+
+            if (!_services.TryGetValue(typeof(T), out var rawService))
+            {
+                string registered = _services.Count == 0
+                    ? "none"
+                    : string.Join(", ", _services.Keys.Select(type => type.Name));
+                reason =
+                    $"Service {typeof(T).Name} is not registered. " +
+                    $"Registered services: {registered}.";
+                return false;
+            }
+
+            service = rawService as T;
+            if (service == null)
+            {
+                reason =
+                    $"Service {typeof(T).Name} was found but could not be cast " +
+                    "to the requested type.";
+                return false;
+            }
+
+            reason = string.Empty;
+            return true;
+        }
+
+        /// <summary>
+        /// Checks whether a service type is currently registered.
+        /// </summary>
+        /// <typeparam name="T">The service type to check.</typeparam>
+        /// <returns>True when the service type is registered.</returns>
+        public static bool IsServiceRegistered<T>() where T : class, IHMSService
+        {
+            return _services.ContainsKey(typeof(T));
+        }
+
+        /// <summary>
+        /// Resolves a service with bounded retries to tolerate short bootstrap
+        /// races during runtime initialization.
+        /// </summary>
+        /// <typeparam name="T">The service type to resolve.</typeparam>
+        /// <param name="timeoutSeconds">Maximum time to wait for the service.</param>
+        /// <param name="retryIntervalSeconds">Delay between resolution attempts.</param>
+        /// <returns>The resolved service instance.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when timeout or retry interval are not positive.
+        /// </exception>
+        /// <exception cref="TimeoutException">
+        /// Thrown when the service is unavailable until timeout.
+        /// </exception>
+        public static async Awaitable<T> GetWithRetry<T>(
+            float timeoutSeconds = 1.5f,
+            float retryIntervalSeconds = 0.05f
+        ) where T : class, IHMSService
+        {
+            if (timeoutSeconds <= 0f)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(timeoutSeconds),
+                    timeoutSeconds,
+                    "Timeout must be greater than zero."
+                );
+            }
+
+            if (retryIntervalSeconds <= 0f)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(retryIntervalSeconds),
+                    retryIntervalSeconds,
+                    "Retry interval must be greater than zero."
+                );
+            }
+
+            float startedAt = Time.realtimeSinceStartup;
+            float nextAttemptAt = startedAt;
+            string lastReason = "Service has not been resolved yet.";
+
+            while (Time.realtimeSinceStartup - startedAt <= timeoutSeconds)
+            {
+                if (Time.realtimeSinceStartup >= nextAttemptAt)
+                {
+                    if (TryGet(out T service, out lastReason))
+                    {
+                        return service;
+                    }
+
+                    nextAttemptAt = Time.realtimeSinceStartup + retryIntervalSeconds;
+                }
+
+                await Awaitable.NextFrameAsync();
+            }
+
+            throw new TimeoutException(
+                $"Timed out while resolving service {typeof(T).Name} after " +
+                $"{timeoutSeconds:F2}s. Last reason: {lastReason}"
+            );
+        }
 
         #endregion
 
@@ -45,7 +199,16 @@ namespace HMSUnitySDK
             }
         }
 
-        private void OnDestroy() => _instance = null;
+        private void OnDestroy()
+        {
+            if (_instance != this)
+            {
+                return;
+            }
+
+            _services.Clear();
+            _instance = null;
+        }
 
         #endregion
 
@@ -61,7 +224,13 @@ namespace HMSUnitySDK
         {
             if (!_services.TryGetValue(typeof(T), out var service))
             {
-                throw new ArgumentException($"Service {typeof(T).Name} is not registered.");
+                string registered = _services.Count == 0
+                    ? "none"
+                    : string.Join(", ", _services.Keys.Select(type => type.Name));
+                throw new ArgumentException(
+                    $"Service {typeof(T).Name} is not registered. " +
+                    $"Registered services: {registered}."
+                );
             }
 
             return service as T;
@@ -87,9 +256,10 @@ namespace HMSUnitySDK
         /// </remarks>
         public void InitializeServices(HMSRuntimeInfo runtimeInfo, Transform servicesContainer)
         {
+            _services.Clear();
+
             var hmsConfig = HMSConfig.Get();
             var services = new List<IHMSService>();
-            var serviceBaseType = typeof(IHMSService);
 
             IEnumerable<Type> childrenTypes = hmsConfig.GetAssemblies()
                  .SelectMany(assembly =>

@@ -312,7 +312,21 @@ namespace HMSUnitySDK.Editor
         private static bool CanStartServer()
         {
             var runtimeInfo = HMSRuntimeInfo.GetFromResources();
-            return runtimeInfo != null && runtimeInfo.Profile.RuntimeMode != HMSRuntimeMode.Editor;
+            if (runtimeInfo == null)
+            {
+                return false;
+            }
+
+            if (runtimeInfo.Profile == null)
+            {
+                Debug.LogWarning(
+                    "HMS editor server not started because HMSRuntimeInfo has " +
+                    "no runtime profile assigned."
+                );
+                return false;
+            }
+
+            return runtimeInfo.Profile.RuntimeMode != HMSRuntimeMode.Editor;
         }
     }
 
